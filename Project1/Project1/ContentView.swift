@@ -8,12 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
-    //    MARK:-
+    //    MARK:- Properties
     @State private var checkAmount = ""
     @State private var numberOfPeople = 2
     @State private var tipPercentage = 2
     
     let tipPercentages = [10, 15, 20, 25, 0]
+    
+    var totalPerPerson: Double {
+        let peopleCount = Double(numberOfPeople + 2)
+        let tipSelection = Double(tipPercentages[tipPercentage])
+        let orderAmount = Double(checkAmount) ?? 0
+
+        let tipValue = orderAmount / 100 * tipSelection
+        let grandTotal = orderAmount + tipValue
+        let amountPerPerson = grandTotal / peopleCount
+
+        return amountPerPerson
+    }
     
     var body: some View {
         NavigationView {
@@ -36,7 +48,7 @@ struct ContentView: View {
                     .pickerStyle(SegmentedPickerStyle())
                 }
                 Section{
-                    Text("Amount $\(checkAmount)")
+                    Text("$\(totalPerPerson, specifier: "%.2f")")
                 }
             }
             .navigationBarTitle("SwiftUI",displayMode: .inline)
