@@ -10,13 +10,14 @@ import SwiftUI
 struct ContentView: View {
     //    MARK:- Properties
     @State private var checkAmount = ""
-    @State private var numberOfPeople = 2
+    @State private var numberOfPeople = "2"
     @State private var tipPercentage = 2
     
     let tipPercentages = [10, 15, 20, 25, 0]
     
     var totalPerPerson: Double {
-        let peopleCount = Double(numberOfPeople + 2)
+        let numOfPeople = Int(numberOfPeople) ?? 0
+        let peopleCount = Double(numOfPeople + 2)
         let tipSelection = Double(tipPercentages[tipPercentage])
         let orderAmount = Double(checkAmount) ?? 0
 
@@ -27,17 +28,27 @@ struct ContentView: View {
         return amountPerPerson
     }
     
+    var totalAmount:Double{
+        let orderAmount = Double(checkAmount) ?? 0
+        let tipSelection = Double(tipPercentages[tipPercentage])
+        let tipValue = orderAmount / 100 * tipSelection
+
+        return tipValue + orderAmount
+    }
+    
     var body: some View {
         NavigationView {
             Form{
                 Section{
                     TextField("amount", text: $checkAmount)
                         .keyboardType(.decimalPad)
-                    Picker("Number of people",selection: $numberOfPeople){
-                        ForEach(2 ..< 100){
-                            Text("\($0) people")
-                        }
-                    }
+                    TextField("Number of people", text: $numberOfPeople)
+                        .keyboardType(.decimalPad)
+//                    Picker("Number of people",selection: $numberOfPeople){
+//                        ForEach(2 ..< 100){
+//                            Text("\($0) people")
+//                        }
+//                    }
                 }
                 Section(header:Text("How much tip do you want to leave?")){
                     Picker("Tip percentage", selection: $tipPercentage){
@@ -47,8 +58,11 @@ struct ContentView: View {
                     }
                     .pickerStyle(SegmentedPickerStyle())
                 }
-                Section{
+                Section(header:Text("Amount per person")){
                     Text("$\(totalPerPerson, specifier: "%.2f")")
+                }
+                Section(header: Text("total amount")){
+                    Text("$\(totalAmount)")
                 }
             }
             .navigationBarTitle("SwiftUI",displayMode: .inline)
